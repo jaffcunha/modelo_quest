@@ -1,0 +1,107 @@
+# Guia para treinamento OOP em Python com ênfase em Django
+
+## Herança
+
+### Models
+
+O modo mais simples de ensinar herança é através de um exemplo prático envolvendo diagrama de classes e models.
+
+Apresente o diagrama de classes a seguir. Ele se refere ao projeto SI Biotérios:
+
+	Pesquisador(Model):
+	+nome: string
+
+	Docente(Pesquisador):
+	+nUSP: int
+
+E faça-os construir tais classes no arquivo models.py.
+Ressalte a importância de se escrever `abstract = True` dentro da classe Meta, impedindo a criação de uma coluna no banco de dados para aquela classe.
+Explique que a classe Meta é responsável pelo gerenciamento de dados internos à própria classe e que geralmente não é muito utilizado além do que já fazemos.
+
+Após isso, abra o shell com
+`python manage.py shell`
+Importe os models com
+`from modelo_quest.apps.treinamentoOOP.models import *`
+
+Agora peça para criarem um objeto de cada tipo. Diga que o construtor deve receber os valores iniciais dos atributos como paramêtros, lembrando que strings requerem aspas.
+
+Num primeiro momento, muitos tentarão
+`p = Pesquisador("Fulano")`
+e
+`d = Docente("Beltrano", 8993592)`
+
+Peça para que tentem chamar os seguintes atributos em cada um:
+`p.nome` e `d.nUSP`
+
+Aqui eles deverão ter retornos nulos. Peça para que façam `d.nome` e eles receberão o número USP.
+
+#### O que aconteceu?
+
+Aparentemente existe um atributo recebendo os nomes "Fulano" e "Beltrano", enquanto o número 8993592 é recebido por 'nome'.
+O que ocorre é que a classe Pesquisador também herda atributos de alguém. Ela é filha de Model.
+Para ver que atributos os objetos criados possuem, faça:
+`p.__dict__` e `d.__dict__`
+
+Será possível enxergar `'nUSP': None, 'nome': 8993592, 'id': 'Beltrano'`, o que prova que o primeiro atributo no construtor é um id.
+
+Para mostrar o tanto de atributos e métodos herdados, faça:
+`m = models.Model` e em seguida `m.__dict__`, recebendo uma longa lista com alguns métodos conhecidos, como `delete` e `save`.
+
+### Forms
+
+Em que outro arquivo podemos encontrar classes e, portanto, realizar herança?
+
+Os forms são classes herdeiras de django.forms, comumente também herdeiras de django.forms.ModelForm, provendo um modo simples de implementação, que reaproveita o model.
+
+A função de um form é possibilitar um modo simples de estabelecer os widgets e modos de input para cada atributo do model. Seu papel se dá apenas no front end de uma aplicação, portanto.
+Para a maioria dos atributos da model, há um widget e modo de input recomendados e seria desperdício de tempo defini-los toda vez no form. Para isso existe o ModelForm, que permite uma associação rápida entre o form e a respectiva model. Para cada field em model, haverá um widget correspondente automaticamente associado.
+
+Assim, se um field em model é do tipo CharField e possui null = True, o correspondente widget será TextField e permitirá ser deixado em branco no preenchimento.
+
+Para o mesmo diagrama de classes acima, escreva seus respectivos modelforms.
+    class PesquisadorForm(forms.ModelForm):
+        class Meta:
+            model = Pesquisador
+            fields = ['nome',]
+            abstract = True
+    class DocenteForm(PesquisadorForm):
+        class Meta:
+            model = Docente
+            fields = PesquisadorForm.Meta.fields + ['nUSP',]
+
+Aqui temos a relação entre o model e o form dentro da classe Meta, assim como a explícita nomeação dos fields da model que serão utilizados pelo form.
+
+### Views
+
+A herança nas views surgiu para facilitar o desenvolvimento de software com muitas funcionalidades semelhantes.
+
+View é uma rotina de operações chamada pela url que recebe como parâmetros um `request` e retorna um `HttpResponse`.
+
+HTTP é a sigla para `HyperText Transfer Protocol`. 
+"HTTP is a request/response protocol, which means your computer sends a request for some file (e.g. "Get me the file 'home.html'"), and the web server sends back a response ("Here's the file", followed by the file itself).".
+No nosso contexto, o usuário envia um request sempre que roda uma url, o qual é processado por uma view que deve retornar um response adequado.
+
+O request enviado possui muitas informações relevantes, das quais a mais importante para este treinamento é o método.
+
+Há diversos tipos de métodos, como "OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE" e "CONNECT". Para nós o foco será em GET e POST.
+
+No método GET, o request pede informações para o servidor, enquanto o método POST envia dados.
+
+#### Function Based Views e Class Based Views
+
+Views podem ser implementadas (baseadas) através de funções ou classes com métodos.
+
+O método tradicional, FBV, requer condicionais para verificação do método HTTP, como se pode ver no exemplo, além de não permitir herança adequada de rotinas.
+
+As CBV, são, como o nome diz, implementadas através de classes, com métodos internos para cada método HTTP. Sua principal vantagem está no reaproveitamento de rotinas por herança e na possibilidade de utilizar uma mesma view para diferentes classes de objetos.
+
+O exemplo de código é autoexplicativo.
+
+#### Generic Views
+
+Generic views surgiram para facilitar a vida de programadores em geral, encapsulando views inteiras e disponibilzando em poucas linhas para o desenvolvedor.
+
+Em vez de precisarmos implementar cada view de nosso CRUD, podemos apenas chamar views genéricas que se responsabilizam pela tarefa. O trabalho de reinventar a roda acabou!
+
+Existem class based generic views e function based generic views, mas abordaremos apenas a primeira.
+
