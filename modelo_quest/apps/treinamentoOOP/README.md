@@ -126,11 +126,26 @@ Em resumo, CBV permite que façamos uso de OOP para escrevermos códigos mais li
 
 #### Class Based Generic Views
 
-Generic views surgiram para facilitar a vida de programadores em geral, encapsulando views inteiras e disponibilizando-as em poucas linhas para o desenvolvedor.
+Generic views surgiram para facilitar a vida de grande parte dos desenvolvedores de sites, encapsulando views inteiras e disponibilizando-as para uso em poucas linhas.
 
-Em vez de precisarmos implementar cada view de nosso CRUD, podemos apenas chamar views genéricas que se responsabilizam pela tarefa. O trabalho de reinventar a roda acabou!
+São views "ready to use", em que basta que alguns atributos sejam preenchidos para que ela funcione como esperado. Cada view específica herda de uma classe repleta de métodos que lidam com a validação de forms, renderização de templates e alteração no banco de dados. Em vez de precisarmos implementar cada view de nosso CRUD, seja feito em FBV ou CBV, como vínhamos fazendo, podemos apenas chamar views genéricas que se responsabilizam pela tarefa. O trabalho de reinventar a roda acabou!
 
-Existem class based generic views e function based generic views, mas abordaremos apenas a primeira.
+Existem class based generic views e function based generic views, mas abordaremos apenas a primeira. Além disso, como a estrutura das generic views do Django é confusa, usaremos o package `"django-vanilla-views"`, que simplifica seu uso e entendimento.
 
-AQUI AINDA PRECISO TERMINAR
-mostrar funcionamento, não necessidade de indicar html completa, sucesse_url, reverse_lazy. Mostrar como funciona no html as variáveis padrão.
+Vamos olhar o exemplo em `views.py` e entender como funcionam e como podemos usá-las.
+
+1)Peça para que descrevam o que parece estar acontecendo nas quatro views. Questione a necessidade de cada atributo. Mostre que `model` é o principal atributo a ser utilizado. Pergunte por que foi utilizado `form_class` em Cadastrar, e por que em Editar usou-se `fields`. No primeiro caso usa-se o form implementado em outro arquivo, enquanto no segundo gera-se um form padrão, com base nos fields da model. É recomendado implementar um form para cada model, para que facilite a mudança dos tipos de widget e seu HTML.
+
+`reverse_lazy` se trata de uma forma de chamar uma url utilizando seu "apelido", o parâmetro `name` e `sucess_url` simplesmente redireciona após um submit de sucesso.
+
+Indague o porquê de não haver a indicação de uma template nas views. Mostre que `template_name` recebe um nome default e mostre os arquivos dentro de templates/treinamentoOOP.
+
+2)Peça para que mudem views erradas do projeto com base no que aprenderam.
+
+3)Peça agora para que incluam `user` como atributo OneToOneField de `Usuario`. Eles devem mudar `models.py` e `forms.py` (aqui eles precisam de um novo form para user), ficando como em `viewsExemplo5.py`. Problematize e pergunte como será possível salvar dois ou mais forms com uma mesma generic view.
+
+Acesse agora o site http://django-vanilla-views.org/api/model-views e mostre os inúmeros atributos e métodos que cada classe (CreateView, DetailView,...) possui. Ressalte a importância de alterar algumas delas quando preciso, como `template_name`, `templatem_name_suffix`, `render_to_response()` e `form_valid()`.
+
+Volte à questão de salvar múltiplos forms com uma mesma view. A solução para isso será uma alteração no método `form_valid()`, como se pode ver em `viewsExemplo6.py`.
+
+4)Peça para mudarem isso nas views do projeto (pode ficar para casa).

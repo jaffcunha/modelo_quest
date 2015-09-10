@@ -18,6 +18,8 @@ urlpatterns = patterns('',
     # CBGV
     url(r'^cadastrarGV/$', CadastrarGV.as_view(), name='cadastrar gv'),
     url(r'^listarGV/$', ListarGV.as_view(), name='listar gv'),
+    url(r'^detalharGV/(?P<pk>\d+)/$', DetalharGV.as_view(),
+        name='detalhar gv'),
     url(r'^editarGV/(?P<pk>\d+)/$', EditarGV.as_view(), name='editar gv'),
     url(r'^deletarGV/(?P<pk>\d+)/$', DeletarGV.as_view(), name='deletar gv'),
 )

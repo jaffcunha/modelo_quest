@@ -2,8 +2,9 @@
 from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy
 from modelo_quest.apps.treinamentoOOP.models import *
+from modelo_quest.apps.treinamentoOOP.forms import *
 from django.views.generic import View #Importar para usar class-based-views (CBV)
-from vanilla import CreateView, DeleteView, ListView, UpdateView, TemplateView
+from vanilla import CreateView, DeleteView, ListView, DetailView, UpdateView, TemplateView
 
 
 # Exemplo 2 (CBV)
@@ -47,8 +48,12 @@ class carregarTemplate3(TemplateView):
 
 class CadastrarGV(CreateView):
     model = Docente
-    fields = ['nome', 'nUSP']
+    form_class = DocenteForm
     success_url = reverse_lazy('cadastrar gv')
+
+
+class DetalharGV(DetailView):
+    model = Docente
 
 
 class ListarGV(ListView):
