@@ -112,7 +112,7 @@ A solução (não muito elegante) para esse problema foi a criação de um méto
 
 3)Note-se que `cadastro.html` foi chamado no `render()`. Veremos que isto não é necessário em muitos casos de generic views. A template em questão é bem simples, mas ainda sim precisa ser sempre reescrita.
 
-Para praticar, peça que criem uma CBV com o nome listarCBV e que seja responsável por listar os nomes dos docentes cadastrados. Eles devem utilizar as variáveis `tipoForm`, `lista` (recebe os objetos) e `lista.html`, além de observar as variáveis em `DocenteForm`, o que auxilia no processo. O teste pode ser feito chamando a url `listarCBV` e o resultado deve ser semelhante ao encontrado em `viewsExemplo3.py`.
+Para praticar, peça que criem uma CBV com o nome listarCBV e que seja responsável por listar os nomes dos docentes cadastrados. Eles devem utilizar as variáveis `tipoForm`, `lista` (recebe os objetos) e `lista.html`, além de observar as variáveis em `DocenteForm`, o que auxilia no processo. O teste pode ser feito chamando a url `listarCBV` (descomente a linha em `urls.py`) e o resultado deve ser semelhante ao encontrado em `viewsExemplo3.py`.
 
 ##### Herança de views
 

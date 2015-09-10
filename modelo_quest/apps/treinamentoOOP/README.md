@@ -132,4 +132,5 @@ Em vez de precisarmos implementar cada view de nosso CRUD, podemos apenas chamar
 
 Existem class based generic views e function based generic views, mas abordaremos apenas a primeira.
 
-
+AQUI AINDA PRECISO TERMINAR
+mostrar funcionamento, não necessidade de indicar html completa, sucesse_url, reverse_lazy. Mostrar como funciona no html as variáveis padrão.
