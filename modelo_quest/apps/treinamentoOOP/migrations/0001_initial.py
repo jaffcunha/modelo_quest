@@ -11,18 +11,18 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Pesquisador',
+            name='Usuario',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
                 ('nome', models.CharField(max_length=64)),
             ],
         ),
         migrations.CreateModel(
             name='Docente',
             fields=[
-                ('pesquisador_ptr', models.OneToOneField(primary_key=True, parent_link=True, serialize=False, auto_created=True, to='treinamentoOOP.Pesquisador')),
+                ('usuario_ptr', models.OneToOneField(parent_link=True, to='treinamentoOOP.Usuario', serialize=False, primary_key=True, auto_created=True)),
                 ('nUSP', models.IntegerField(verbose_name='Número USP')),
             ],
-            bases=('treinamentoOOP.pesquisador',),
+            bases=('treinamentoOOP.usuario',),
         ),
     ]

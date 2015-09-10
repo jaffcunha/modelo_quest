@@ -1,4 +1,4 @@
-# Guia para treinamento OOP em Python com ênfase em Django
+# Guia para treinamento OOP em Django
 
 ## Herança
 
@@ -6,12 +6,12 @@
 
 O modo mais simples de ensinar herança é através de um exemplo prático envolvendo diagrama de classes e models.
 
-Apresente o diagrama de classes a seguir. Ele se refere ao projeto SI Biotérios:
+Apresente o diagrama de classes a seguir, também presente a pasta `imagens` como arquivo `1.jpeg`:
 
-	Pesquisador(Model):
+	Usuário(Model):
 	+nome: string
 
-	Docente(Pesquisador):
+	Docente(Usuário):
 	+nUSP: int
 
 E faça-os construir tais classes no arquivo models.py.
@@ -26,7 +26,7 @@ Importe os models com
 Agora peça para criarem um objeto de cada tipo. Diga que o construtor deve receber os valores iniciais dos atributos como paramêtros, lembrando que strings requerem aspas.
 
 Num primeiro momento, muitos tentarão
-`p = Pesquisador("Fulano")`
+`p = Usuário("Fulano")`
 e
 `d = Docente("Beltrano", 8993592)`
 
@@ -38,7 +38,7 @@ Aqui eles deverão ter retornos nulos. Peça para que façam `d.nome` e eles rec
 #### O que aconteceu?
 
 Aparentemente existe um atributo recebendo os nomes "Fulano" e "Beltrano", enquanto o número 8993592 é recebido por 'nome'.
-O que ocorre é que a classe Pesquisador também herda atributos de alguém. Ela é filha de Model.
+O que ocorre é que a classe Usuário também herda atributos de alguém. Ela é filha de Model.
 Para ver que atributos os objetos criados possuem, faça:
 `p.__dict__` e `d.__dict__`
 
@@ -59,15 +59,15 @@ Para a maioria dos atributos da model, há um widget e modo de input recomendado
 Assim, se um field em model é do tipo CharField e possui null = True, o correspondente widget será TextField e permitirá ser deixado em branco no preenchimento.
 
 Para o mesmo diagrama de classes acima, escreva seus respectivos modelforms.
-    class PesquisadorForm(forms.ModelForm):
+    class UsuárioForm(forms.ModelForm):
         class Meta:
-            model = Pesquisador
+            model = Usuário
             fields = ['nome',]
             abstract = True
-    class DocenteForm(PesquisadorForm):
+    class DocenteForm(UsuárioForm):
         class Meta:
             model = Docente
-            fields = PesquisadorForm.Meta.fields + ['nUSP',]
+            fields = UsuárioForm.Meta.fields + ['nUSP',]
 
 Aqui temos a relação entre o model e o form dentro da classe Meta, assim como a explícita nomeação dos fields da model que serão utilizados pelo form.
 
@@ -87,19 +87,46 @@ Há diversos tipos de métodos, como "OPTIONS", "GET", "HEAD", "POST", "PUT", "D
 
 No método GET, o request pede informações para o servidor, enquanto o método POST envia dados.
 
-#### Function Based Views e Class Based Views
+#### Function Based Views
 
 Views podem ser implementadas (baseadas) através de funções ou classes com métodos.
 
-O método tradicional, FBV, requer condicionais para verificação do método HTTP, como se pode ver no exemplo, além de não permitir herança adequada de rotinas.
+O método tradicional, FBV, requer condicionais para verificação do método HTTP, como se pode ver no exemplo em `viewsExemplo1.py`, além de não permitir herança adequada de rotinas.
 
-As CBV, são, como o nome diz, implementadas através de classes, com métodos internos para cada método HTTP. Sua principal vantagem está no reaproveitamento de rotinas por herança e na possibilidade de utilizar uma mesma view para diferentes classes de objetos.
+Neste treinamento não vamos mostrar seu funcionamento.
 
-O exemplo de código é autoexplicativo.
+#### Class Based Views
 
-#### Generic Views
+As CBV, são, como o nome diz, implementadas através de classes, com métodos internos (algo como `def foo_bar():`) para cada método HTTP. Sua principal vantagem está no reaproveitamento de rotinas por herança e na possibilidade de utilizar uma mesma view para diferentes classes de objetos.
 
-Generic views surgiram para facilitar a vida de programadores em geral, encapsulando views inteiras e disponibilzando em poucas linhas para o desenvolvedor.
+O exemplo `viewsExemplo2.py` mostra uma classe com o método `get()` implementado. Como vimos, a classe em questão é filha de `View` e herda todos os atributos e métodos de sua mãe, reescrevendo um de interesse.
+
+Vamos entender seu funcionamento a partir de um requerimento comum:
+1)O usuário do sistema acessa a url `cadastrarCBV`. Olhando para ela em `urls.py` vemos que se escreve como:
+    url(r'^cadastrarCBV/$', CadastrarCBV.as_view(tipoForm=DocenteForm), name='cadastrar cbv')
+Sabemos que o primeiro parâmetro de `url()` deve ser o nome a ser chamado no navegador. O segundo precisa ser... uma função da views! Mas nossa view é implementada em classe!
+
+A solução (não muito elegante) para esse problema foi a criação de um método chamado `as_view()` definido em `View`. Precisamos chamá-lo na própria url. Uma das vantagens é o fato de podermos reescrever atributos de nossa view direto nesse método! Veja no exemplo que `tipoForm` foi reescrito de `None` para `DocenteForm`. Isso permite que diferentes classes sejam trabalhadas com a mesma view, mudando apenas um atributo passado como parâmetro!
+
+2)A url chama a view `CadastrarCBV()`. Para o primeiro chamado, trata-se de um `request` do  tipo `get` e nosso `as_view` trata de chamar o método adequado. O método apenas carrega o form adequado, de acordo com o parâmetro anterior. Destaque o uso de `self` para se referir a atributos externos ao método. Mostre que o parâmetro `request` entre como parâmetro do método, nunca pela classe.
+
+3)Note-se que `cadastro.html` foi chamado no `render()`. Veremos que isto não é necessário em muitos casos de generic views. A template em questão é bem simples, mas ainda sim precisa ser sempre reescrita.
+
+Para praticar, peça que criem uma CBV com o nome listarCBV e que seja responsável por listar os nomes dos docentes cadastrados. Eles devem utilizar as variáveis `tipoForm`, `lista` (recebe os objetos) e `lista.html`, além de observar as variáveis em `DocenteForm`, o que auxilia no processo. O teste pode ser feito chamando a url `listarCBV` e o resultado deve ser semelhante ao encontrado em `viewsExemplo3.py`.
+
+##### Herança de views
+
+Até agora tínhamos apenas uma classe para cadastrar. Peça para os participantes criarem um model `Associado(Usuario)` com o atributo `docente: string`, um form `AssociadoForm(Usuario)` e uma url com parâmetro `tipoForm=AssociadoForm` e confirmem se é possível utilizar a mesma view para o cadastro!
+
+Ressalte que é provável que classes diferentes exijam tratamentos muito distintos em seu cadastro, principalmente se envolver múltiplos forms. Em muitos casos é possível que as views tornem-se muito grandes, com muitas condicionais que quase nunca são chamadas. O processo de debug se torna difícil e a escrita não é elegante, além de ignorar os princípios OOP. Peça para que os participantes apenas pensem em conjunto qual a melhor forma, considerando princípios OOP, de reaproveitar códigos em uma situação em que a classe Docente se liga a dois forms que devem ser preenchidos: DocenteForm e UserForm.
+
+O esperado é que pensem em criar uma classe de Cadastro geral com um método `get()` que cadastre forms em comum e outra classe filha, com métodos que reaproveitem os métodos da mãe. Em Python isso é muito simples, como se pode ver em `viewsExemplo4.py`. O segredo aqui é chamar o método da mãe através da sintaxe `super(<class>, self).<method>()`.
+
+Em resumo, CBV permite que façamos uso de OOP para escrevermos códigos mais limpos e sucintos, aproveitando melhor o tempo do desenvolvedor e dos debugadores. O sistema de herança é simples e em geral vale a pena adotar seu uso, principalmente em se tratando de funções semelhantes para os diferentes atores. Em se tratando do caso especial de CRUD, usaremos generic views.
+
+#### Class Based Generic Views
+
+Generic views surgiram para facilitar a vida de programadores em geral, encapsulando views inteiras e disponibilizando-as em poucas linhas para o desenvolvedor.
 
 Em vez de precisarmos implementar cada view de nosso CRUD, podemos apenas chamar views genéricas que se responsabilizam pela tarefa. O trabalho de reinventar a roda acabou!
 

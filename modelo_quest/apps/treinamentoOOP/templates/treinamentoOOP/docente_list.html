@@ -1,0 +1,16 @@
+olar lista GV
+<div>
+  {% for objeto in docente_list %}
+    <div>
+      <label>Nome: </label>
+      {{objeto.nome}}
+      <td><a href="{% url 'editar gv' objeto.pk %}">editar</a></td>
+      <td>
+      <form method="POST" action="{% url 'deletar gv' objeto.pk %}">
+        {% csrf_token %}
+        <input type="submit" value="delete"></input>
+      </form>
+
+    </div>
+  {% endfor %}
+</div>

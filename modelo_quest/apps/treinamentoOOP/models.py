@@ -14,10 +14,10 @@ from django.db import models
     # Methods
     # Meta and String
 
-class Pesquisador(models.Model):
-    """docstring for Pesquisador"""
+class Usuario(models.Model):
+    """docstring for Usuário"""
     nome = models.CharField(max_length=64)
 
-class Docente(Pesquisador):
+class Docente(Usuario):
     """docstring for Docente"""
     nUSP = models.IntegerField("Número USP")

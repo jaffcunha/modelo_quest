@@ -1,9 +1,9 @@
-olar cadastro
+olar cadastro GV
 {% if sucesso %}
   sucesso!
 {% endif %}
 <form id="form-project" method="post" role="form">{%csrf_token%}
-  {% for campo in cadastroForm %}
+  {% for campo in form %}
     <div>
       <div>
         <label>{{campo.label}}</label>

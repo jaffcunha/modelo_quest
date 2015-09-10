@@ -2,13 +2,13 @@
 from django import forms 
 from modelo_quest.apps.treinamentoOOP.models import *
 
-class PesquisadorForm(forms.ModelForm):
+class UsuarioForm(forms.ModelForm):
     class Meta:
-        model = Pesquisador
+        model = Usuario
         fields = ['nome',]
         abstract = True
 
-class DocenteForm(PesquisadorForm):
+class DocenteForm(UsuarioForm):
     class Meta:
         model = Docente
-        fields = PesquisadorForm.Meta.fields + ['nUSP',]
+        fields = UsuarioForm.Meta.fields + ['nUSP',]
