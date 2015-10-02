@@ -4,8 +4,10 @@ from modelo_quest.apps.treinamentoOOP.models import *
 from modelo_quest.apps.treinamentoOOP.views import *
 from modelo_quest.apps.treinamentoOOP.forms import *
 from vanilla import CreateView, DeleteView, ListView, UpdateView, TemplateView
+from django.contrib import admin
 
 urlpatterns = patterns('',
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^$', TemplateView.as_view(template_name="home.html")),
     url(r'^template/$', carregarTemplate3.as_view(name="Jaff Cunha")),
     #

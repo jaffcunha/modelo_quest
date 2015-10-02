@@ -29,7 +29,7 @@ class CadastrarCBV(View):
 # CARREGAR templates de forma simples:
 class carregarTemplate1(View):
     def get(self, request, *args, **kwargs):
-        render(request, 'home.html')
+        return render(request, 'home.html')
 
 # Eh equivalente a:
 class carregarTemplate2(TemplateView):
